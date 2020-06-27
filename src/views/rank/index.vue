@@ -1,11 +1,9 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <div>rank</div>
 </template>
 
 <script>
   export default {
-    name: 'App'
+    name: 'Rank'
   }
 </script>

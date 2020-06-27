@@ -1,10 +1,21 @@
+html,
+body,
+#app {
+  height: 100%;
+}
+
 html {
   box-sizing: border-box;
 }
+
 body {
   font-size: 14px;
   font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, sans-serif;
+  background: $bg-page;
 }
-*, *::before, *::after {
+
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
