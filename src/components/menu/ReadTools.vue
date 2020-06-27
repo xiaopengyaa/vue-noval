@@ -1,6 +1,11 @@
 <template>
   <transition name="van-fade">
-    <div v-show="visible" class="read-tools" @click="hideTools">
+    <div
+      v-show="visible"
+      class="read-tools"
+      @click="hideTools"
+      @touchmove.stop="touchmove"
+    >
       <transition name="van-slide-down">
         <back v-show="visible" mode="dark">
           <div class="tools-wrap">
@@ -77,6 +82,9 @@
       },
       handleClick(item) {
         this.$emit(item.name)
+      },
+      touchmove() {
+        this.$emit('update:visible', false)
       },
       more() {
         this.$toast({

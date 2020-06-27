@@ -88,7 +88,7 @@
         this.$router.push('/detail/reader')
       },
       handlerScroll(e) {
-        this.showTop = e.target.scrollTop > 20
+        this.showTop = e.target.scrollTop > 60
       }
     }
   }

@@ -12,30 +12,38 @@
           @click="orderList"
         />
       </back>
-      <div class="chapter-catalogue__list">
-        <van-cell
-          v-for="(item, index) in chapterList"
-          :key="index"
-          class="chapter-catalogue__item"
-          :class="{
-            'active-item': active == index
-          }"
-          :value-class="{
-            'van-ellipsis': true,
-            'cell-active': active == index
-          }"
-          :value="`${item.text}-${index + 1}`"
-        />
-      </div>
+      <scroll
+        ref="scroll"
+        :data="chapterList"
+        class="chapter-catalogue__scroll"
+      >
+        <div class="chapter-catalogue__list">
+          <van-cell
+            v-for="(item, index) in chapterList"
+            :key="index"
+            class="chapter-catalogue__item"
+            :class="{
+              'active-item': active == index
+            }"
+            :value-class="{
+              'van-ellipsis': true,
+              'cell-active': active == index
+            }"
+            :value="`${item.text}-${index + 1}`"
+          />
+        </div>
+      </scroll>
     </div>
   </transition>
 </template>
 
 <script>
+  import Scroll from '@components/scroll'
   import Back from '@components/back'
   export default {
     name: 'ChapterCatalogue',
     components: {
+      Scroll,
       Back
     },
     props: {
@@ -218,8 +226,6 @@
     },
     watch: {
       visible(flag) {
-        const value = flag ? 'hidden' : 'auto'
-        document.body.style.overflow = value
         // 滚动到active元素
         flag && this.scrollIntoActive()
       }
@@ -233,8 +239,10 @@
       },
       scrollIntoActive() {
         this.$nextTick(() => {
-          console.log('scroll')
-          this.$el.querySelector('.active-item').scrollIntoViewIfNeeded()
+          this.$refs.scroll.refresh()
+          this.$refs.scroll.scrollToElement(
+            this.$el.querySelector('.active-item')
+          )
         })
       }
     }
@@ -264,7 +272,7 @@
       float: right;
       padding: 10px 0 10px 10px;
     }
-    &__list {
+    &__scroll {
       flex: 1;
       margin-top: 44px;
       overflow: auto;

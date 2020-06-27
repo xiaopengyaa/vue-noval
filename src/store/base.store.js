@@ -1,7 +1,8 @@
 export default {
   namespaced: true,
   state: {
-    loading: 0
+    loading: 0,
+    baseRouteName: 'recommend'
   },
   mutations: {
     SET_LOADING(state, status) {
@@ -9,6 +10,9 @@ export default {
     },
     RESET_LOADING(state) {
       state.loading = 0
+    },
+    SET_BASE_ROUTE_NAME(state, name) {
+      state.baseRouteName = name
     }
   },
   actions: {

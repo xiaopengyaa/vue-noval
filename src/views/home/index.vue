@@ -2,6 +2,7 @@
   <div class="home">
     <div class="title">
       <div class="title-logo" />
+      <van-icon class="title-search" size="18" name="search" @click="search" />
     </div>
     <van-tabs v-model="activeName">
       <van-tab
@@ -15,16 +16,21 @@
     <keep-alive>
       <router-view class="view" />
     </keep-alive>
+    <search :visible.sync="searchVisible" />
   </div>
 </template>
 
 <script>
+  import { mapState, mapMutations } from 'vuex'
+  import Search from '@components/search'
   export default {
     name: 'Home',
+    components: {
+      Search
+    },
     data() {
       return {
         title: process.env.VUE_APP_TITLE,
-        activeName: 'recommend',
         tabArr: [
           {
             name: 'recommend',
@@ -46,12 +52,30 @@
             title: '新书',
             path: '/new'
           }
-        ]
+        ],
+        searchVisible: false
+      }
+    },
+    computed: {
+      ...mapState('base', ['baseRouteName']),
+      activeName: {
+        get() {
+          return this.baseRouteName
+        },
+        set(val) {
+          this.SET_BASE_ROUTE_NAME(val)
+        }
       }
     },
     watch: {
       $route() {
-        this.activeName = this.$route.name
+        this.SET_BASE_ROUTE_NAME(this.$route.name)
+      }
+    },
+    methods: {
+      ...mapMutations('base', ['SET_BASE_ROUTE_NAME']),
+      search() {
+        this.searchVisible = true
       }
     }
   }
@@ -65,6 +89,7 @@
     overflow: hidden;
   }
   .title {
+    position: relative;
     @include flex-center;
     font-size: 18px;
     color: $color-red;
@@ -76,6 +101,12 @@
       width: 120px;
       height: 36px;
       @include background-image('~@assets/images/base/title.png');
+    }
+    .title-search {
+      position: absolute;
+      right: 10px;
+      padding: 10px;
+      color: $color-black;
     }
   }
   .view {
