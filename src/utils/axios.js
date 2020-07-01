@@ -5,6 +5,7 @@
  */
 import axios from 'axios'
 import store from '@/store'
+import { Toast } from 'vant'
 
 // 创建axios实例
 const service = axios.create({
@@ -16,6 +17,11 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     store.dispatch('base/SET_LOADING', true)
+    Toast.loading({
+      message: '加载中...',
+      duration: 0,
+      forbidClick: true
+    })
     return config
   },
   err => {
@@ -27,11 +33,21 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     store.dispatch('base/SET_LOADING', false)
+    if (store.state.base.loading <= 0) {
+      Toast.clear()
+    }
+    if (response.status != 200) {
+      Toast.fail('请求失败')
+    }
     return response
   },
   err => {
     const data = err.response.data
     store.dispatch('base/SET_LOADING', false)
+    if (store.state.base.loading <= 0) {
+      Toast.clear()
+    }
+    Toast.fail('请求失败')
     return Promise.reject(data || err)
   }
 )
@@ -44,7 +60,7 @@ const api = {
         params: data,
         ...config
       })
-      return Promise.resolve(res)
+      return Promise.resolve(res.data)
     } catch (err) {
       console.error(err)
     }
@@ -52,7 +68,7 @@ const api = {
   async post(url, data, config = {}) {
     try {
       const res = await service.post(url, data, config)
-      return Promise.resolve(res)
+      return Promise.resolve(res.data)
     } catch (err) {
       console.error(err)
     }

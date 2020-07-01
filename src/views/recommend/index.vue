@@ -1,94 +1,57 @@
 <template>
-  <scroll ref="scroll" class="recommend" :data="list">
+  <scroll ref="scroll" class="recommend" :data="recommendList">
     <div class="scroll-content">
-      <div class="card-list">
-        <div class="card-list__title" @click="toDetail">
+      <div v-show="recommendList.length > 0" class="card-list">
+        <div class="card-list__title">
           <i class="card-list__icon" />
           热门小说
         </div>
         <div class="card-list__content">
-          <card-item class="item" />
-          <card-item class="item van-hairline--top" />
-          <card-item class="item van-hairline--top" />
-          <card-item class="item van-hairline--top" />
-          <card-item class="item van-hairline--top" />
+          <card-item
+            v-for="(item, index) in recommendList"
+            :key="item.bookId"
+            :class="{
+              item: true,
+              'van-hairline--top': index > 0
+            }"
+            :title="item.name"
+            :desc="item.desc"
+            :name="item.author"
+            :src="item.image"
+            @click="toDetail(item)"
+          />
         </div>
       </div>
-      <div class="card-list">
+      <div v-for="item in sortList" :key="item.bookId" class="card-list">
         <div class="card-list__title">
           <i class="card-list__icon" />
-          玄幻小说
+          {{ item.type }}
         </div>
         <div class="card-list__content">
-          <card-item class="item van-hairline--bottom" />
-          <van-cell is-link class="sub-item">
+          <card-item
+            :title="item.name"
+            :desc="item.desc"
+            :name="item.author"
+            :src="item.image"
+            class="item van-hairline--bottom"
+            @click="toDetail(item)"
+          />
+          <van-cell
+            v-for="cItem in item.list.slice(0, 5)"
+            :key="cItem.bookId"
+            is-link
+            @click="toDetail(cItem)"
+          >
             <template #title>
-              <span class="item-title">万古神帝</span>
+              <span class="item-title">{{ cItem.name }}</span>
               <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-        </div>
-      </div>
-      <div class="card-list">
-        <div class="card-list__title">
-          <i class="card-list__icon" />
-          修真小说
-        </div>
-        <div class="card-list__content">
-          <card-item class="item van-hairline--bottom" />
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
-            </template>
-          </van-cell>
-          <van-cell is-link class="sub-item">
-            <template #title>
-              <span class="item-title">万古神帝</span>
-              <span class="item-line">-</span>
-              <span class="item-author">飞天鱼</span>
+              <span class="item-author">{{ cItem.author }}</span>
             </template>
           </van-cell>
         </div>
       </div>
     </div>
+    <van-empty v-show="showNoContent" class="empty" description="暂无内容" />
   </scroll>
 </template>
 
@@ -104,19 +67,38 @@
     },
     data() {
       return {
-        list: []
+        recommendList: [],
+        sortList: []
       }
+    },
+    computed: {
+      showNoContent() {
+        return this.recommendList.length === 0 && this.sortList.length === 0
+      }
+    },
+    async created() {
+      const data = await this.$api.home.getRecommend()
+      this.recommendList = data.recommendList
+      this.sortList = data.sortList
     },
     activated() {
       this.SET_BASE_ROUTE_NAME(this.$route.name)
-      this.$nextTick(() => {
-        this.$refs.scroll.refresh()
-      })
+      this.updateScroll()
     },
     methods: {
       ...mapMutations('base', ['SET_BASE_ROUTE_NAME']),
-      toDetail() {
-        this.$router.push('/detail')
+      toDetail(item) {
+        this.$router.push({
+          path: '/detail',
+          query: {
+            bookId: item.bookId
+          }
+        })
+      },
+      updateScroll() {
+        this.$nextTick(() => {
+          this.$refs.scroll.refresh()
+        })
       }
     }
   }
@@ -167,5 +149,9 @@
         color: $color-pl;
       }
     }
+  }
+  .empty {
+    height: 100%;
+    margin-top: -50px;
   }
 </style>

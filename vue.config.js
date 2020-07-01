@@ -24,6 +24,8 @@ module.exports = {
     isProduction && (config.externals = externals)
   },
   chainWebpack(config) {
+    // 修复HMR
+    config.resolve.symlinks(true)
     // 设置别名
     config.resolve.alias
       .set('@', resolve('src'))
@@ -50,8 +52,8 @@ module.exports = {
         target: process.env.VUE_APP_PROXY_URL, // 代理地址，这里设置的地址会代替axios中设置的baseURL
         changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
         pathRewrite: {
-          '^/api': '/' // 重写之后url为 http://xxx:xxx/xxx
-          // '^/api': '/api' // 重写之后url为 http://xxx:xxx/api/xxx
+          // '^/api': '/' // 重写之后url为 http://xxx:xxx/xxx
+          '^/api': '/api' // 重写之后url为 http://xxx:xxx/api/xxx
         }
       }
     }

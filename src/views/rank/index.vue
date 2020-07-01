@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <van-empty description="功能开发中..." />
-  </div>
+  <van-empty class="empty" description="功能开发中..." />
 </template>
 
 <script>
@@ -16,3 +14,10 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .empty {
+    height: 100%;
+    margin-top: -100px;
+  }
+</style>

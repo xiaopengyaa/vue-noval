@@ -1,5 +1,5 @@
 <template>
-  <div class="card-item">
+  <div class="card-item" @click="handleClick">
     <van-image
       class="book-img van-hairline--surround"
       width="75"
@@ -11,7 +11,7 @@
     <div class="book-info">
       <div class="book-info__title">{{ title }}</div>
       <div class="book-info__desc van-multi-ellipsis--l2">{{ desc }}</div>
-      <div class="book-info__author">
+      <div v-if="name" class="book-info__author">
         <van-icon name="manager" size="18" />
         <span class="text">{{ name }}</span>
       </div>
@@ -25,21 +25,24 @@
     props: {
       title: {
         type: String,
-        default: '仙道九绝'
+        default: ''
       },
       desc: {
         type: String,
-        default:
-          '创业青年魂穿修道世界，用现代科技跟修道系统死磕，各种打脸虐渣。'
+        default: ''
       },
       name: {
         type: String,
-        default: '剑啸龙翔'
+        default: ''
       },
       src: {
         type: String,
-        default:
-          'https://www.biquge.com.cn/files/article/image/32/32883/32883s.jpg'
+        default: ''
+      }
+    },
+    methods: {
+      handleClick() {
+        this.$emit('click')
       }
     }
   }

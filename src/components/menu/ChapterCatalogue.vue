@@ -3,7 +3,8 @@
     <div v-show="visible" class="chapter-catalogue">
       <back mode="light" :auto-handle="false" @back="goBack">
         <div class="chapter-catalogue__title">
-          目录（共{{ list.length }}章）
+          目录
+          <span v-show="list.length > 0">（{{ list.length }}章）</span>
         </div>
         <van-icon
           class="chapter-catalogue__icon"
@@ -19,17 +20,18 @@
       >
         <div class="chapter-catalogue__list">
           <van-cell
-            v-for="(item, index) in chapterList"
-            :key="index"
-            class="chapter-catalogue__item"
+            v-for="item in chapterList"
+            :key="item.chapterId"
             :class="{
-              'active-item': active == index
+              'chapter-catalogue__item': true,
+              'active-item': value == item.chapterId
             }"
             :value-class="{
               'van-ellipsis': true,
-              'cell-active': active == index
+              'cell-active': value == item.chapterId
             }"
-            :value="`${item.text}-${index + 1}`"
+            :value="item.chapterName"
+            @click="handleClick(item)"
           />
         </div>
       </scroll>
@@ -46,170 +48,23 @@
       Scroll,
       Back
     },
+    model: {
+      prop: 'value',
+      event: 'click'
+    },
     props: {
       visible: {
         type: Boolean,
         default: false
       },
-      active: {
+      value: {
         type: String,
-        default: '15'
+        default: ''
       },
       list: {
         type: Array,
         default() {
-          return [
-            {
-              text: '第一章 人间美味1'
-            },
-            {
-              text: '第一章 人间美味2'
-            },
-            {
-              text: '第一章 人间美味3'
-            },
-            {
-              text: '第一章 人间美味4'
-            },
-            {
-              text: '第一章 人间美味5'
-            },
-            {
-              text: '第一章 人间美味6'
-            },
-            {
-              text: '第一章 人间美味7'
-            },
-            {
-              text: '第一章 人间美味8'
-            },
-            {
-              text: '第一章 人间美味9'
-            },
-            {
-              text: '第一章 人间美味10'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            },
-            {
-              text: '第一章 人间美味'
-            }
-          ]
+          return []
         }
       }
     },
@@ -228,11 +83,17 @@
       visible(flag) {
         // 滚动到active元素
         flag && this.scrollIntoActive()
+      },
+      order() {
+        this.scrollIntoActive()
       }
     },
     methods: {
       orderList() {
         this.order = this.order === 'descending' ? 'ascending' : 'descending'
+      },
+      handleClick(item) {
+        this.$emit('click', item.chapterId)
       },
       goBack() {
         this.$emit('update:visible', false)

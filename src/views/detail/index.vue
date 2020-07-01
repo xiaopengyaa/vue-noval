@@ -8,12 +8,12 @@
           width="26"
           height="36"
           fit="cover"
-          src="https://www.biquge.com.cn/files/article/image/32/32883/32883s.jpg"
-          alt="仙道九绝"
+          :src="detail.image"
+          :alt="detail.name"
         />
         <div v-show="showTop" class="avatar-info">
-          <div class="avatar-info__title">仙道九绝</div>
-          <div class="avatar-info__desc">都市</div>
+          <div class="avatar-info__title">{{ detail.name }}</div>
+          <div class="avatar-info__desc">{{ detail.type }}</div>
         </div>
       </div>
     </back>
@@ -24,68 +24,111 @@
         height="134"
         fit="cover"
         radius="4"
-        src="https://www.biquge.com.cn/files/article/image/32/32883/32883s.jpg"
-        alt="仙道九绝"
+        :src="detail.image"
+        :alt="detail.name"
       />
       <div class="book-info">
-        <div class="book-info__title">仙道九绝</div>
-        <div class="book-info__author">剑啸龙翔</div>
+        <div class="book-info__title">{{ detail.name }}</div>
+        <div class="book-info__author">{{ detail.author }}</div>
         <div class="book-info__desc">
-          <span class="type">都市</span>
+          <span class="type">{{ detail.type }}</span>
           <span class="line">|</span>
-          <span class="status">连载中</span>
+          <span class="status">{{ detail.status }}</span>
         </div>
       </div>
     </div>
     <div class="detail__desc">
-      <div class="intro van-hairline--bottom">
-        经历过末日绝望的黄明哲，重回高考那一年，继承神秘的学习系统，努力弥补曾经的遗憾，带领人类迈向未知的命运，而人类的未来将何去何从?
-        …… 在这娱乐至死的时代， 或许需要一些理性； 在这星空璀璨的宇宙，
-        有多少真理的信徒； 如果没有科学的光芒， 人类将万古如长夜。
-      </div>
-      <van-cell is-link title-class="menu" value-class="time" value="14分钟前">
+      <div class="intro van-hairline--bottom">{{ detail.desc }}</div>
+      <van-cell
+        is-link
+        title-class="menu"
+        value-class="time"
+        :value="relativeTime"
+        @click="showCatalogue"
+      >
         <template #title>
           <van-icon name="bars" size="16" />
           <span class="new-chapter van-ellipsis">
-            第994章 联邦重整！
+            {{ detail.newestChapterName }}
           </span>
         </template>
       </van-cell>
     </div>
     <div class="detail__chapter">
       <div class="chapter-title van-hairline--bottom">最新章节预览</div>
-      <van-cell value="第994章 联邦重整！" />
-      <van-cell value="第993章 以战求团！" />
-      <van-cell value="第992章 不怂！" />
-      <van-cell value="第991章 沉睡之地！" />
-      <van-cell value="第990章 再临道宫！" />
+      <van-cell
+        v-for="item in detail.recentChapterList"
+        :key="item.chapterId"
+        value-class="van-ellipsis"
+        :value="item.chapterName"
+        @click="toRead(bookId, item.chapterId)"
+      />
     </div>
     <div class="detail__btn-group">
-      <van-button class="read-right-now" type="danger" @click="toRead">
+      <van-button
+        class="read-right-now"
+        type="danger"
+        @click="toRead(bookId, detail.chapterId)"
+      >
         立即阅读
       </van-button>
     </div>
+    <chapter-catalogue
+      v-model="activeId"
+      :list="chapterList"
+      :visible.sync="chapterVisible"
+    />
   </div>
 </template>
 
 <script>
   import Back from '@components/back'
+  import ChapterCatalogue from '@components/menu/ChapterCatalogue'
+
   export default {
     name: 'Detail',
     components: {
-      Back
+      Back,
+      ChapterCatalogue
     },
     data() {
       return {
-        showTop: false
+        showTop: false,
+        bookId: '',
+        detail: {},
+        relativeTime: '',
+        activeId: '',
+        chapterList: [],
+        chapterVisible: false
+      }
+    },
+    async created() {
+      this.bookId = this.$route.query.bookId || ''
+      if (this.bookId) {
+        this.detail = await this.$api.detail.getBookInfo(this.bookId)
+        this.relativeTime = this.$dayjs(this.detail.updateTime).fromNow()
+      } else {
+        this.back()
       }
     },
     methods: {
       back() {
         window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
       },
-      toRead() {
-        this.$router.push('/detail/reader')
+      toRead(bookId, chapterId) {
+        this.$router.push({
+          path: '/detail/reader',
+          query: {
+            bookId,
+            chapterId
+          }
+        })
+      },
+      async showCatalogue() {
+        this.chapterVisible = true
+        if (this.chapterList.length === 0) {
+          this.chapterList = await this.$api.detail.getChapterList(this.bookId)
+        }
       },
       handlerScroll(e) {
         this.showTop = e.target.scrollTop > 60

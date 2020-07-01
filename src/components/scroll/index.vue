@@ -99,7 +99,11 @@
           probeType: this.probeType,
           click: this.click,
           scrollX: this.scrollX,
-          useTransition: false
+          // useTransition: false,
+          bounce: {
+            top: false,
+            bottom: false
+          }
         })
 
         // 是否派发滚动事件
