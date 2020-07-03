@@ -13,17 +13,22 @@
       </form>
       <scroll ref="scroll" class="search__scroll" :data="list">
         <div class="search__list">
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
-          <card-item class="search__item van-hairline--bottom" />
+          <card-item
+            v-for="item in list"
+            :key="item.bookId"
+            :title="item.name"
+            :name="item.author"
+            :src="item.image"
+            :desc="item.desc"
+            class="search__item van-hairline--bottom"
+            @click="toDetail(item)"
+          />
         </div>
+        <van-empty
+          v-show="list.length === 0"
+          class="empty"
+          description="暂无搜索结果"
+        />
       </scroll>
     </div>
   </transition>
@@ -59,8 +64,20 @@
       }
     },
     methods: {
-      onSearch(val) {
-        console.log(val)
+      async onSearch(val) {
+        if (val) {
+          this.list = await this.$api.home.search(val)
+        } else {
+          this.list = []
+        }
+      },
+      toDetail(item) {
+        this.$router.push({
+          path: '/detail',
+          query: {
+            bookId: item.bookId
+          }
+        })
       },
       onCancel() {
         this.$emit('update:visible', false)
@@ -92,6 +109,10 @@
       margin: 16px;
       box-shadow: 0 0 10px rgba($color: $color-black, $alpha: 0.1);
     }
+  }
+  .empty {
+    height: 100%;
+    margin-top: -50px;
   }
   ::v-deep {
     .van-search__action {

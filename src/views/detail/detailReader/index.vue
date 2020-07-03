@@ -1,5 +1,5 @@
 <template>
-  <div class="reader">
+  <div ref="reader" class="reader">
     <div class="reader__top">{{ chapterInfo.title }}</div>
     <div class="reader__content" @click="showTools">
       <article class="reader__article">
@@ -10,13 +10,17 @@
     </div>
     <read-tools
       :visible.sync="toolVisible"
+      @back="back"
       @menu="handleMenu"
       @set="handleSet"
+      @prev="change(chapterInfo.prevChapterId)"
+      @next="change(chapterInfo.nextChapterId)"
     />
     <chapter-catalogue
       v-model="chapterId"
       :list="chapterList"
       :visible.sync="chapterVisible"
+      @click="change"
     />
   </div>
 </template>
@@ -40,25 +44,62 @@
         chapterInfo: {}
       }
     },
-    async created() {
-      this.bookId = this.$route.query.bookId
-      this.chapterId = this.$route.query.chapterId
-      if (this.bookId && this.chapterId) {
-        this.chapterInfo = await this.$api.detail.getChapterInfo(
-          this.bookId,
-          this.chapterId
-        )
-      } else {
-        this.back()
+    watch: {
+      $route(to, from) {
+        if (to.query.chapterId != from.query.chapterId) {
+          this.init()
+        }
       }
     },
+    created() {
+      this.init()
+    },
     methods: {
+      async init() {
+        this.bookId = this.$route.query.bookId
+        this.chapterId = this.$route.query.chapterId
+        if (this.bookId && this.chapterId) {
+          this.chapterInfo = await this.$api.detail.getChapterInfo(
+            this.bookId,
+            this.chapterId
+          )
+          this.$refs.reader.scrollIntoView()
+        } else {
+          this.back()
+        }
+      },
+      // 小说跳转
+      change(chapterId) {
+        this.toolVisible = false
+        this.chapterVisible = false
+        // 不存在则跳回小说简介页面
+        if (!chapterId) {
+          this.back()
+          return
+        }
+        if (this.$route.query.chapterId !== chapterId) {
+          this.$router.push({
+            path: '/detail/reader',
+            query: {
+              bookId: this.bookId,
+              chapterId
+            }
+          })
+          return
+        }
+      },
       back() {
-        window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
+        this.$router.push({
+          path: '/detail',
+          query: {
+            bookId: this.bookId
+          }
+        })
       },
       showTools() {
         this.toolVisible = true
       },
+      // 获取目录
       async handleMenu() {
         this.chapterVisible = true
         if (this.chapterList.length === 0) {
@@ -77,7 +118,8 @@
 
 <style lang="scss" scoped>
   .reader {
-    background-color: #c4b395;
+    min-height: 100%;
+    background: #c8e8c8;
     &__top {
       position: fixed;
       top: 0;
@@ -87,17 +129,10 @@
       line-height: 44px;
       color: rgba($color: $color-black, $alpha: 0.4);
       padding: 0 16px;
-      background: url('~@assets/images/base/skin-default-t.jpg') no-repeat
-        center top;
-      background-size: 100%;
+      background: #c8e8c8;
     }
     &__content {
       padding-top: 44px;
-      background: url('~@assets/images/base/skin-default-t.jpg') no-repeat
-          center top,
-        url('~@assets/images/base/skin-default-b.jpg') no-repeat center bottom,
-        url('~@assets/images/base/skin-default-m.jpg') repeat-y center 119px;
-      background-size: 100%;
     }
     &__article {
       color: rgba($color: $color-black, $alpha: 0.85);
@@ -109,6 +144,7 @@
       }
       .content {
         font-size: 18px;
+        line-height: 22px;
         padding-bottom: 16px;
         text-align: justify;
       }

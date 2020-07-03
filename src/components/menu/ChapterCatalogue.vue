@@ -1,7 +1,7 @@
 <template>
   <transition name="van-slide-right">
     <div v-show="visible" class="chapter-catalogue">
-      <back mode="light" :auto-handle="false" @back="goBack">
+      <back mode="light" @back="goBack">
         <div class="chapter-catalogue__title">
           目录
           <span v-show="list.length > 0">（{{ list.length }}章）</span>

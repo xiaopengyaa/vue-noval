@@ -26,20 +26,11 @@
       mode: {
         type: String,
         default: ''
-      },
-      autoHandle: {
-        type: Boolean,
-        default: true
       }
     },
     methods: {
       back() {
         this.$emit('back')
-        if (this.autoHandle) {
-          window.history.length > 1
-            ? this.$router.go(-1)
-            : this.$router.push('/')
-        }
       }
     }
   }

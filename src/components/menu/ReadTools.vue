@@ -7,7 +7,7 @@
       @touchmove.stop="touchmove"
     >
       <transition name="van-slide-down">
-        <back v-show="visible" mode="dark">
+        <back v-show="visible" mode="dark" @back="back">
           <div class="tools-wrap">
             <van-icon name="ellipsis" @click="more" />
           </div>
@@ -85,6 +85,9 @@
       },
       touchmove() {
         this.$emit('update:visible', false)
+      },
+      back() {
+        this.$emit('back')
       },
       more() {
         this.$toast({

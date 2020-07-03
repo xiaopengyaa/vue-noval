@@ -74,8 +74,43 @@ const homeApi = {
         })
       })
       return { recommendList, sortList }
+    },
+    // 小说搜索
+    async search(keyword) {
+      const url = 'https://www.biquge.com.cn/search.php'
+      const html = await api.get(url, { q: keyword })
+      const $ = cheerio.load(html)
+      const listMap = {}
+      $('.result-list .result-item').each((index, elem) => {
+        const image = $(elem)
+          .find('.result-game-item-pic img')
+          .attr('src')
+        const bookId = image.split('/').reverse()[1]
+        // 数据去重
+        if (bookId && listMap[bookId]) return false
+        const name = $(elem)
+          .find('.result-game-item-title a')
+          .attr('title')
+        const desc = $(elem)
+          .find('.result-game-item-desc')
+          .text()
+        const $span = $(elem).find('.result-game-item-info span')
+        const author = $($span[1]).text()
+        const type = $($span[3]).text()
+        const updateTime = $($span[5]).text()
+        listMap[bookId] = {
+          bookId,
+          name,
+          image,
+          desc,
+          author,
+          type,
+          updateTime
+        }
+      })
+      return Object.values(listMap)
     }
   }
 }
-// homeApi.bqg.getRecommend()
+// homeApi.bqg.search('逆天')
 module.exports = homeApi

@@ -1,6 +1,6 @@
 <template>
   <div class="detail" @scroll="handlerScroll">
-    <back :mode="showTop ? 'light' : ''">
+    <back :mode="showTop ? 'light' : ''" @back="back">
       <div class="avatar">
         <van-image
           v-show="showTop"
@@ -32,8 +32,8 @@
         <div class="book-info__author">{{ detail.author }}</div>
         <div class="book-info__desc">
           <span class="type">{{ detail.type }}</span>
-          <span class="line">|</span>
-          <span class="status">{{ detail.status }}</span>
+          <!-- <span class="line">|</span>
+          <span class="status">{{ detail.status }}</span> -->
         </div>
       </div>
     </div>
@@ -77,6 +77,7 @@
       v-model="activeId"
       :list="chapterList"
       :visible.sync="chapterVisible"
+      @click="change"
     />
   </div>
 </template>
@@ -113,7 +114,26 @@
     },
     methods: {
       back() {
-        window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
+        this.$router.push('/')
+      },
+      // 小说跳转
+      change(chapterId) {
+        this.chapterVisible = false
+        // 不存在则跳回小说简介页面
+        if (!chapterId) {
+          this.back()
+          return
+        }
+        if (this.$route.query.chapterId !== chapterId) {
+          this.$router.push({
+            path: '/detail/reader',
+            query: {
+              bookId: this.bookId,
+              chapterId
+            }
+          })
+          return
+        }
       },
       toRead(bookId, chapterId) {
         this.$router.push({

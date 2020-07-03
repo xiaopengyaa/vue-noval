@@ -14,4 +14,14 @@ router.get(
   })
 )
 
+// 小说搜索
+router.post(
+  '/search',
+  asyncHandler(async (req, res) => {
+    const { keyword = '' } = req.body
+    const data = await api[reqType].search(keyword)
+    res.send(data)
+  })
+)
+
 module.exports = router
