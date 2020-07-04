@@ -9,7 +9,7 @@ import { Toast } from 'vant'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL, // 数据接口域名统一配置
+  baseURL: process.env.VUE_APP_AXIOS_URL, // 数据接口域名统一配置
   timeout: 1000 * 10 // 默认超时时间
 })
 

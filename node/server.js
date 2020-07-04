@@ -1,12 +1,12 @@
 const express = require('express')
 const app = express()
-const homeRouter = require('./node/router/home')
-const detailRouter = require('./node/router/detail')
+const homeRouter = require('./router/home')
+const detailRouter = require('./router/detail')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.use('/api/home', homeRouter)
+app.use(`/api/home`, homeRouter)
 app.use('/api/detail', detailRouter)
 
 // 错误处理

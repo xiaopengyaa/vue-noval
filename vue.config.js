@@ -9,7 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const resolve = dir => path.join(__dirname, dir)
 
 module.exports = {
-  publicPath: process.env.VUE_APP_BASE_URL,
+  publicPath: process.env.VUE_APP_PUBLIC_PATH,
   lintOnSave: !isProduction,
   productionSourceMap: false,
   css: {
