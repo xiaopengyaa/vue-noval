@@ -82,9 +82,6 @@
       this.recommendList = data.recommendList
       this.sortList = data.sortList
     },
-    activated() {
-      this.updateScroll()
-    },
     methods: {
       toDetail(item) {
         this.$router.push({
@@ -92,11 +89,6 @@
           query: {
             bookId: item.bookId
           }
-        })
-      },
-      updateScroll() {
-        this.$nextTick(() => {
-          this.$refs.scroll.refresh()
         })
       }
     }

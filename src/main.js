@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import api from '@/api'
+import utils from '@/utils'
 import Vant from 'vant'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -19,8 +20,9 @@ dayjs.locale('zh-cn')
 dayjs.extend(relativeTime)
 Vue.prototype.$dayjs = dayjs
 
-// 全局引入api
+// 全局引入api,utils
 Vue.prototype.$api = api
+Vue.prototype.$utils = utils
 
 Vue.config.productionTip = false
 

@@ -10,7 +10,7 @@ import { Toast } from 'vant'
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL, // 数据接口域名统一配置
-  timeout: 1000 * 10 // 默认超时时间
+  timeout: 1000 * 20 // 默认超时时间20s
 })
 
 // request拦截器
@@ -45,7 +45,7 @@ service.interceptors.response.use(
     return response
   },
   err => {
-    const data = err.response.data
+    const data = err.response && err.response.data
     store.dispatch('base/SET_LOADING', false)
     if (store.state.base.loading <= 0) {
       Toast.clear()

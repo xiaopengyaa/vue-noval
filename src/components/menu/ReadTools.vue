@@ -3,7 +3,7 @@
     <div
       v-show="visible"
       class="read-tools"
-      @click="hideTools"
+      @click.stop="hideTools"
       @touchmove.stop="touchmove"
     >
       <transition name="van-slide-down">

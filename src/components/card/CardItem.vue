@@ -9,11 +9,23 @@
       :alt="title"
     />
     <div class="book-info">
-      <div class="book-info__title">{{ title }}</div>
-      <div class="book-info__desc van-multi-ellipsis--l2">{{ desc }}</div>
+      <div v-if="title" class="book-info__title van-ellipsis">{{ title }}</div>
+      <div
+        v-if="desc"
+        :class="{
+          'book-info__desc': true,
+          'van-ellipsis': remark,
+          'van-multi-ellipsis--l2': !remark
+        }"
+      >
+        {{ desc }}
+      </div>
       <div v-if="name" class="book-info__author">
         <van-icon name="manager" size="18" />
         <span class="text">{{ name }}</span>
+      </div>
+      <div v-if="remark" class="book-info__remark van-ellipsis">
+        {{ remark }}
       </div>
     </div>
   </div>
@@ -36,6 +48,10 @@
         default: ''
       },
       src: {
+        type: String,
+        default: ''
+      },
+      remark: {
         type: String,
         default: ''
       }
@@ -61,18 +77,16 @@
     }
     .book-info {
       flex: 1;
-      display: flex;
-      flex-direction: column;
       font-size: 14px;
       color: $color-pl;
       line-height: 20px;
+      overflow: hidden;
       &__title {
         font-size: 16px;
         color: $color-dark;
         margin-bottom: 8px;
       }
       &__desc {
-        flex: 1;
         margin-bottom: 8px;
       }
       &__author {
@@ -81,6 +95,9 @@
         .text {
           margin-left: 4px;
         }
+      }
+      &__remark {
+        margin-top: 8px;
       }
     }
   }

@@ -9,7 +9,7 @@
         />
       </van-sidebar>
     </scroll>
-    <scroll class="sort__list" :data="listMap[activeIndex]">
+    <scroll ref="scroll" class="sort__list" :data="listMap[activeIndex]">
       <div class="scroll-content">
         <card-item
           v-for="(item, index) in listMap[activeIndex]"

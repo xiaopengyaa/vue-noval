@@ -4,5 +4,9 @@ export default {
     const cache = {}
     context.keys().forEach(key => (cache[key] = context(key).default))
     return cache
+  },
+  // 数组去重
+  unique(arr) {
+    return [...new Set(arr)]
   }
 }

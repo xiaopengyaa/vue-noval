@@ -25,17 +25,17 @@ export default [
         }
       },
       {
-        path: 'rank',
-        name: 'rank',
-        component: () => import('@/views/rank'),
+        path: 'finish',
+        name: 'finish',
+        component: () => import('@/views/finish'),
         meta: {
           keepAlive: true
         }
       },
       {
-        path: 'new',
-        name: 'new',
-        component: () => import('@/views/new'),
+        path: 'recent',
+        name: 'recent',
+        component: () => import('@/views/recent'),
         meta: {
           keepAlive: true
         }

@@ -221,6 +221,7 @@
         padding-bottom: 16px;
         margin: 0 16px;
         line-height: 22px;
+        word-break: break-all;
       }
       .menu {
         display: flex;

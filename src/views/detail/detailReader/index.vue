@@ -1,7 +1,7 @@
 <template>
-  <div ref="reader" class="reader">
+  <div ref="reader" class="reader" @click="showTools">
     <div class="reader__top">{{ chapterInfo.title }}</div>
-    <div class="reader__content" @click="showTools">
+    <div class="reader__content">
       <article class="reader__article">
         <div class="title">{{ chapterInfo.title }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -41,6 +41,7 @@
         bookId: '',
         chapterId: '',
         chapterList: [],
+        bookInfo: {},
         chapterInfo: {}
       }
     },
@@ -54,19 +55,53 @@
     created() {
       this.init()
     },
+    beforeDestroy() {
+      // 记录最近阅读信息
+      this.saveRecent()
+    },
     methods: {
       async init() {
         this.bookId = this.$route.query.bookId
         this.chapterId = this.$route.query.chapterId
         if (this.bookId && this.chapterId) {
-          this.chapterInfo = await this.$api.detail.getChapterInfo(
-            this.bookId,
-            this.chapterId
-          )
+          const {
+            bookInfo,
+            chapterInfo
+          } = await this.$api.detail.getChapterInfo(this.bookId, this.chapterId)
+          this.bookInfo = bookInfo
+          this.chapterInfo = chapterInfo
+          // 记录最近阅读信息
+          this.saveRecent()
+          // 回到顶部
           this.$refs.reader.scrollIntoView()
         } else {
           this.back()
         }
+      },
+      // 记录最近阅读信息（只保存最新10条）
+      saveRecent() {
+        const LENGTH = 10
+        const oldRecentArr = this.$utils.localStorage.get('recentArr') || []
+        // 过滤重复bookId的数据
+        const recentArr = oldRecentArr.filter(
+          item => item.bookId !== this.bookId
+        )
+        // 开头插入最新的数据
+        recentArr.unshift({
+          bookId: this.bookId,
+          chapterId: this.chapterId,
+          title: this.chapterInfo.title,
+          name: this.bookInfo.name,
+          image: this.bookInfo.image,
+          author: this.bookInfo.author,
+          time: +new Date()
+        })
+        // 去掉超出的数据
+        if (recentArr.length > LENGTH) {
+          recentArr.pop()
+        }
+        // 保存
+        this.$utils.localStorage.set('recentArr', recentArr)
       },
       // 小说跳转
       change(chapterId) {

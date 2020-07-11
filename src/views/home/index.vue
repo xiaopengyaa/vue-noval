@@ -45,14 +45,14 @@
             path: '/sort'
           },
           {
-            name: 'rank',
-            title: '排行',
-            path: '/rank'
+            name: 'finish',
+            title: '完结',
+            path: '/finish'
           },
           {
-            name: 'new',
-            title: '新书',
-            path: '/new'
+            name: 'recent',
+            title: '最近',
+            path: '/recent'
           }
         ],
         searchVisible: false

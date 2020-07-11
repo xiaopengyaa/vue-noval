@@ -94,6 +94,8 @@ const homeApi = {
     },
     // 获取小说内容
     async getChapterInfo(bookId, chapterId) {
+      // 先获取书籍详情
+      const bookInfo = await this.getBookInfo(bookId)
       const url = `https://biquge.com.cn/book/${bookId}/${chapterId}.html`
       const html = await api.get(url)
       const $ = cheerio.load(html, { decodeEntities: false })
@@ -111,11 +113,15 @@ const homeApi = {
         .replace('.html', '')
       const title = $('.bookname h1').text()
       const content = $('#content').html()
-      return {
+      const chapterInfo = {
         title,
         content,
         prevChapterId,
         nextChapterId
+      }
+      return {
+        bookInfo,
+        chapterInfo
       }
     }
   }
