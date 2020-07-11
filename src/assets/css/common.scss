@@ -19,3 +19,11 @@ body {
 *::after {
   box-sizing: inherit;
 }
+
+// 侧边导航样式修改
+.van-sidebar-item {
+  padding: 14px 12px;
+  &::before {
+    width: 3px;
+  }
+}

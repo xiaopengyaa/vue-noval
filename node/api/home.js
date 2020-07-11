@@ -75,6 +75,60 @@ const homeApi = {
       })
       return { recommendList, sortList }
     },
+    // 分类类型
+    async getSortType() {
+      const url = 'https://m.biquge.com.cn/sort.html'
+      const html = await api.get(url)
+      const $ = cheerio.load(html)
+      const typeList = []
+      // 获取推荐小说
+      $('.content li a').each((index, elem) => {
+        const type = $(elem)
+          .attr('href')
+          .replace(/\//g, '')
+        const typeName = $(elem).text()
+        typeList.push({
+          type,
+          typeName
+        })
+      })
+      return { typeList }
+    },
+    // 获取类型小说
+    async getTypeList(type) {
+      const url = `https://m.biquge.com.cn/${type}/`
+      const html = await api.get(url)
+      const $ = cheerio.load(html)
+      const list = []
+      // 获取推荐小说
+      $('.bookbox').each((index, elem) => {
+        const image = $(elem)
+          .find('.bookimg img')
+          .attr('src')
+        const $bookinfo = $(elem).find('.bookinfo')
+        const name = $bookinfo.find('.bookname a').text()
+        const bookId = $bookinfo
+          .find('.bookname a')
+          .attr('href')
+          .split('/')[2]
+        const author = $bookinfo
+          .find('.author')
+          .text()
+          .replace('作者：', '')
+        const desc = $bookinfo
+          .find('.intro_line')
+          .text()
+          .replace('简介：', '')
+        list.push({
+          image,
+          author,
+          desc,
+          bookId,
+          name
+        })
+      })
+      return { list }
+    },
     // 小说搜索
     async search(keyword) {
       const url = 'https://www.biquge.com.cn/search.php'
@@ -112,5 +166,5 @@ const homeApi = {
     }
   }
 }
-// homeApi.bqg.search('逆天')
+// homeApi.bqg.getTypeList('xuanhuan')
 module.exports = homeApi

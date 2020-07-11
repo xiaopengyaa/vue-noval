@@ -13,9 +13,11 @@
         :to="item.path"
       />
     </van-tabs>
+    <!-- 自定义keep-alive  -->
     <keep-alive>
-      <router-view class="view" />
+      <router-view v-if="$route.meta.keepAlive" class="view" />
     </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive" class="view" />
     <search :visible.sync="searchVisible" />
   </div>
 </template>

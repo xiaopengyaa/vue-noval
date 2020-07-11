@@ -77,8 +77,9 @@
           this.back()
           return
         }
+        // 小说章节跳转
         if (this.$route.query.chapterId !== chapterId) {
-          this.$router.push({
+          this.$router.replace({
             path: '/detail/reader',
             query: {
               bookId: this.bookId,
@@ -89,12 +90,14 @@
         }
       },
       back() {
-        this.$router.push({
-          path: '/detail',
-          query: {
-            bookId: this.bookId
-          }
-        })
+        history.length > 0
+          ? this.$router.go(-1)
+          : this.$router.push({
+              path: '/detail',
+              query: {
+                bookId: this.bookId
+              }
+            })
       },
       showTools() {
         this.toolVisible = true

@@ -57,10 +57,7 @@
     },
     watch: {
       visible(flag) {
-        flag &&
-          this.$nextTick(() => {
-            this.$refs.scroll.refresh()
-          })
+        flag && (this.list = [])
       }
     },
     methods: {

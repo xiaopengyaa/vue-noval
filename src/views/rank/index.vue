@@ -3,15 +3,10 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+  import homeMixins from '@/mixins/homeMixins'
   export default {
     name: 'Rank',
-    activated() {
-      this.SET_BASE_ROUTE_NAME(this.$route.name)
-    },
-    methods: {
-      ...mapMutations('base', ['SET_BASE_ROUTE_NAME'])
-    }
+    mixins: [homeMixins]
   }
 </script>
 

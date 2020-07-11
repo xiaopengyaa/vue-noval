@@ -9,7 +9,7 @@ import { Toast } from 'vant'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_AXIOS_URL, // 数据接口域名统一配置
+  baseURL: process.env.VUE_APP_BASE_URL, // 数据接口域名统一配置
   timeout: 1000 * 10 // 默认超时时间
 })
 
@@ -33,12 +33,15 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     store.dispatch('base/SET_LOADING', false)
-    if (store.state.base.loading <= 0) {
-      Toast.clear()
-    }
-    if (response.status != 200) {
-      Toast.fail('请求失败')
-    }
+    // 设置200ms判断延迟，防止排队请求
+    setTimeout(() => {
+      if (store.state.base.loading <= 0) {
+        Toast.clear()
+      }
+      if (response.status != 200) {
+        Toast.fail('请求失败')
+      }
+    }, 200)
     return response
   },
   err => {

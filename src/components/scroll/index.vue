@@ -68,6 +68,13 @@
         default: false
       },
       /**
+       * 是否开始transtison动画
+       */
+      useTransition: {
+        type: Boolean,
+        default: false
+      },
+      /**
        * 当数据更新后，刷新scroll的延时。
        */
       refreshDelay: {
@@ -99,11 +106,11 @@
           probeType: this.probeType,
           click: this.click,
           scrollX: this.scrollX,
-          // useTransition: false,
-          bounce: {
-            top: false,
-            bottom: false
-          }
+          useTransition: this.useTransition
+          // bounce: {
+          //   top: false,
+          //   bottom: false
+          // }
         })
 
         // 是否派发滚动事件

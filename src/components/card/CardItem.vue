@@ -53,6 +53,8 @@
     display: flex;
     align-items: center;
     background: $color-white;
+    padding: 20px 0;
+    margin: 0 16px;
     .book-img {
       padding: 1px;
       margin-right: 16px;

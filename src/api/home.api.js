@@ -6,6 +6,14 @@ export default {
     const data = await api.get('/api/home/getRecommend')
     return data
   },
+  async getSortType() {
+    const data = await api.get('/api/home/getSortType')
+    return data
+  },
+  async getTypeList(type) {
+    const data = await api.post('/api/home/getTypeList', { type })
+    return data
+  },
   async search(keyword) {
     const data = await api.post('/api/home/search', { keyword })
     return data

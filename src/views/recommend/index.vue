@@ -56,7 +56,7 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+  import homeMixins from '@/mixins/homeMixins'
   import Scroll from '@components/scroll'
   import CardItem from '@components/card/CardItem'
   export default {
@@ -65,6 +65,7 @@
       Scroll,
       CardItem
     },
+    mixins: [homeMixins],
     data() {
       return {
         recommendList: [],
@@ -82,11 +83,9 @@
       this.sortList = data.sortList
     },
     activated() {
-      this.SET_BASE_ROUTE_NAME(this.$route.name)
       this.updateScroll()
     },
     methods: {
-      ...mapMutations('base', ['SET_BASE_ROUTE_NAME']),
       toDetail(item) {
         this.$router.push({
           path: '/detail',
@@ -131,10 +130,6 @@
       margin-right: 10px;
     }
     &__content {
-      .item {
-        padding: 20px 0;
-        margin: 0 16px;
-      }
       .item-title {
         font-size: 16px;
         color: $color-dark;
