@@ -130,9 +130,9 @@ const homeApi = {
       return { list }
     },
     // 小说搜索
-    async search(keyword) {
+    async search(keyword, page) {
       const url = 'https://www.biquge.com.cn/search.php'
-      const html = await api.get(url, { q: keyword })
+      const html = await api.get(url, { q: keyword, p: page })
       const $ = cheerio.load(html)
       const listMap = {}
       $('.result-list .result-item').each((index, elem) => {
@@ -149,9 +149,9 @@ const homeApi = {
           .find('.result-game-item-desc')
           .text()
         const $span = $(elem).find('.result-game-item-info span')
-        const author = $($span[1]).text()
-        const type = $($span[3]).text()
-        const updateTime = $($span[5]).text()
+        const author = $span.eq(1).text()
+        const type = $span.eq(3).text()
+        const updateTime = $span.eq(5).text()
         listMap[bookId] = {
           bookId,
           name,
@@ -162,9 +162,23 @@ const homeApi = {
           updateTime
         }
       })
-      return Object.values(listMap)
+      // 获取分布总数
+      const $pageA = $('.search-result-page-main a')
+      let totalPage = 0
+      if ($pageA.length > 0) {
+        const page = $pageA
+          .last()
+          .attr('href')
+          .split('=')
+          .pop()
+        totalPage = parseInt(page)
+      }
+      return {
+        list: Object.values(listMap),
+        totalPage
+      }
     }
   }
 }
-// homeApi.bqg.getTypeList('xuanhuan')
+// homeApi.bqg.search('3')
 module.exports = homeApi

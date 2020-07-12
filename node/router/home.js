@@ -37,8 +37,8 @@ router.post(
 router.post(
   '/search',
   asyncHandler(async (req, res) => {
-    const { keyword = '' } = req.body
-    const data = await api[REQ_TYPE].search(keyword)
+    const { keyword = '', page = 1 } = req.body
+    const data = await api[REQ_TYPE].search(keyword, page)
     res.send(data)
   })
 )

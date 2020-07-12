@@ -3,19 +3,29 @@
     <div v-show="visible" class="search">
       <form action="/">
         <van-search
-          v-model="searchValue"
+          v-model="keyword"
           class="van-hairline--bottom"
           show-action
           placeholder="请输入搜索关键词"
-          @search="onSearch"
-          @cancel="onCancel"
-        />
+          @search="search"
+        >
+          <template #action>
+            <div @click="cancel">取消</div>
+          </template>
+        </van-search>
       </form>
-      <scroll ref="scroll" class="search__scroll" :data="list">
+      <scroll
+        v-show="list.length > 0"
+        ref="scroll"
+        class="search__scroll"
+        :pullup="true"
+        :data="list"
+        @scrollToEnd="more"
+      >
         <div class="search__list">
           <card-item
-            v-for="item in list"
-            :key="item.bookId"
+            v-for="(item, index) in list"
+            :key="index"
             :title="item.name"
             :name="item.author"
             :src="item.image"
@@ -23,13 +33,14 @@
             class="search__item van-hairline--bottom"
             @click="toDetail(item)"
           />
+          <p v-show="showText" class="is-bottom">我已经到底啦</p>
         </div>
-        <van-empty
-          v-show="list.length === 0"
-          class="empty"
-          description="暂无搜索结果"
-        />
       </scroll>
+      <van-empty
+        v-show="list.length === 0"
+        class="empty"
+        description="暂无搜索结果"
+      />
     </div>
   </transition>
 </template>
@@ -51,21 +62,50 @@
     },
     data() {
       return {
-        searchValue: '',
+        keyword: '',
+        page: 1,
+        totalPage: 0,
+        showText: false,
+        locked: false,
         list: []
       }
     },
     watch: {
       visible(flag) {
-        flag && (this.list = [])
+        if (flag) {
+          this.updateScroll()
+        }
       }
     },
     methods: {
-      async onSearch(val) {
-        if (val) {
-          this.list = await this.$api.home.search(val)
+      async getList() {
+        this.locked = true
+        const { list, totalPage } = await this.$api.home.search({
+          keyword: this.keyword,
+          page: this.page
+        })
+        this.locked = false
+        this.list = this.list.concat(list)
+        this.totalPage = totalPage
+      },
+      async search() {
+        this.page = 1
+        this.showText = false
+        this.list = []
+        if (this.keyword) {
+          await this.getList()
+          this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0)
+        }
+      },
+      // 查找更多
+      more() {
+        if (!this.keyword) return
+        if (this.page < this.totalPage) {
+          if (this.locked) return
+          this.page++
+          this.getList()
         } else {
-          this.list = []
+          this.totalPage > 1 && (this.showText = true)
         }
       },
       toDetail(item) {
@@ -76,8 +116,13 @@
           }
         })
       },
-      onCancel() {
+      cancel() {
         this.$emit('update:visible', false)
+      },
+      updateScroll() {
+        this.$nextTick(() => {
+          this.$refs.scroll && this.$refs.scroll.refresh()
+        })
       }
     }
   }
@@ -110,6 +155,10 @@
   .empty {
     height: 100%;
     margin-top: -50px;
+  }
+  .is-bottom {
+    color: #999;
+    text-align: center;
   }
   ::v-deep {
     .van-search__action {

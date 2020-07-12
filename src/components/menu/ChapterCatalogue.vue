@@ -4,7 +4,9 @@
       <back mode="light" @back="goBack">
         <div class="chapter-catalogue__title">
           目录
-          <span v-show="list.length > 0">（{{ list.length }}章）</span>
+          <span v-show="pageParams.total > 0">
+            （{{ pageParams.total }}章）
+          </span>
         </div>
         <van-icon
           class="chapter-catalogue__icon"
@@ -35,6 +37,13 @@
           />
         </div>
       </scroll>
+      <van-pagination
+        v-show="pageParams.total > pageParams.pageSize"
+        v-model="pageParams.page"
+        :total-items="pageParams.total"
+        :items-per-page="pageParams.pageSize"
+        @change="pageChange"
+      />
     </div>
   </transition>
 </template>
@@ -65,6 +74,16 @@
         type: Array,
         default() {
           return []
+        }
+      },
+      pageParams: {
+        type: Object,
+        default() {
+          return {
+            page: 1,
+            pageSize: 20,
+            total: 0
+          }
         }
       }
     },
@@ -97,6 +116,9 @@
       },
       goBack() {
         this.$emit('update:visible', false)
+      },
+      pageChange(page) {
+        this.$emit('pageChange', page)
       },
       scrollIntoActive() {
         this.$nextTick(() => {

@@ -18,7 +18,8 @@ router.post(
 router.post(
   '/getChapterList',
   asyncHandler(async (req, res) => {
-    const data = await api[REQ_TYPE].getChapterList(req.body.bookId)
+    const { bookId, page = 1, pageSize = 10 } = req.body
+    const data = await api[REQ_TYPE].getChapterList(bookId, page, pageSize)
     res.send(data)
   })
 )

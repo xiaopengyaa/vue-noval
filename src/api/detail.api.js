@@ -6,9 +6,9 @@ export default {
     const data = await api.post('/api/detail/getBookInfo', { bookId })
     return data
   },
-  async getChapterList(bookId) {
-    const data = await api.post('/api/detail/getChapterList', { bookId })
-    return data
+  async getChapterList(data) {
+    const resData = await api.post('/api/detail/getChapterList', data)
+    return resData
   },
   async getChapterInfo(bookId, chapterId) {
     const data = await api.post('/api/detail/getChapterInfo', {

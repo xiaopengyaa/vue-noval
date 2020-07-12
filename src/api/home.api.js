@@ -14,8 +14,8 @@ export default {
     const data = await api.post('/api/home/getTypeList', { type })
     return data
   },
-  async search(keyword) {
-    const data = await api.post('/api/home/search', { keyword })
-    return data
+  async search(data) {
+    const resData = await api.post('/api/home/search', data)
+    return resData
   }
 }

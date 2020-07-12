@@ -4,7 +4,7 @@ export default [
     name: 'detail',
     component: () => import('@/views/detail'),
     meta: {
-      keepAlive: false
+      keepAlive: true
     }
   },
   {

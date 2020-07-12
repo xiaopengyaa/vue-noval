@@ -20,6 +20,8 @@
       v-model="chapterId"
       :list="chapterList"
       :visible.sync="chapterVisible"
+      :page-params="pageParams"
+      @pageChange="pageChange"
       @click="change"
     />
   </div>
@@ -42,7 +44,12 @@
         chapterId: '',
         chapterList: [],
         bookInfo: {},
-        chapterInfo: {}
+        chapterInfo: {},
+        pageParams: {
+          page: 1,
+          pageSize: 100,
+          total: 0
+        }
       }
     },
     watch: {
@@ -141,8 +148,20 @@
       async handleMenu() {
         this.chapterVisible = true
         if (this.chapterList.length === 0) {
-          this.chapterList = await this.$api.detail.getChapterList(this.bookId)
+          this.getChapterList(this.pageParams.page)
         }
+      },
+      pageChange(page) {
+        this.getChapterList(page)
+      },
+      async getChapterList(page) {
+        const { list, total } = await this.$api.detail.getChapterList({
+          bookId: this.bookId,
+          page,
+          pageSize: this.pageParams.pageSize
+        })
+        this.chapterList = list
+        this.pageParams.total = total
       },
       handleSet() {
         this.$toast({

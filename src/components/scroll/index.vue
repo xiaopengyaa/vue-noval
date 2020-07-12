@@ -99,7 +99,7 @@
     activated() {
       // 保证在DOM渲染完毕后初始化better-scroll
       this.$nextTick(() => {
-        this._initScroll()
+        this.refresh()
       })
     },
     methods: {
