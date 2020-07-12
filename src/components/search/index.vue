@@ -30,7 +30,7 @@
             :name="item.author"
             :src="item.image"
             :desc="item.desc"
-            class="search__item van-hairline--bottom"
+            class="search-item van-hairline--bottom"
             @click="toDetail(item)"
           />
           <p v-show="showText" class="is-bottom">我已经到底啦</p>
@@ -145,6 +145,11 @@
     }
     &__list {
       padding: 2px 0;
+      .search-item {
+        padding: 16px;
+        margin: 16px;
+        box-shadow: 0 0 10px rgba($color: $color-black, $alpha: 0.1);
+      }
     }
     &__item {
       padding: 16px;
