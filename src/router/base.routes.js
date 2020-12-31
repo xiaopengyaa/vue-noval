@@ -39,6 +39,22 @@ export default [
         meta: {
           keepAlive: true
         }
+      },
+      {
+        path: 'bookshelf',
+        name: 'bookshelf',
+        component: () => import('@/views/bookshelf'),
+        meta: {
+          keepAlive: true
+        }
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import('@/views/login'),
+        meta: {
+          keepAlive: true
+        }
       }
     ]
   }

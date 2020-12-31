@@ -1,5 +1,10 @@
 <template>
-  <div class="sort">
+  <div
+    class="sort"
+    @touchstart.prevent="touchStart"
+    @touchmove.prevent="touchMove"
+    @touchend="touchEnd('sort')"
+  >
     <scroll class="sort__side-bar" :data="typeList">
       <van-sidebar v-model="activeIndex" @change="onChange">
         <van-sidebar-item
@@ -9,7 +14,12 @@
         />
       </van-sidebar>
     </scroll>
-    <scroll ref="scroll" class="sort__list" :data="listMap[activeIndex]">
+    <scroll
+      ref="scroll"
+      :scroll-bar="scrollBar"
+      class="sort__list"
+      :data="listMap[activeIndex]"
+    >
       <div class="scroll-content">
         <card-item
           v-for="(item, index) in listMap[activeIndex]"
@@ -33,20 +43,23 @@
   import homeMixins from '@/mixins/homeMixins'
   import Scroll from '@components/scroll'
   import CardItem from '@components/card/CardItem'
+  import touchMoveMixin from '@/mixins/touchMoveMixin'
+
   export default {
     name: 'Sort',
     components: {
       Scroll,
       CardItem
     },
-    mixins: [homeMixins],
+    mixins: [homeMixins, touchMoveMixin],
     data() {
       return {
         activeIndex: 0,
         typeList: [],
         listMap: {
           0: []
-        }
+        },
+        scrollBar: false
       }
     },
     created() {

@@ -1,5 +1,6 @@
 <template>
   <scroll
+    ref="scroll"
     class="scroll"
     :data="chapterList"
     :probe-type="2"
@@ -10,8 +11,8 @@
       <div class="detail__title">
         <van-image
           class="book-img"
-          width="100"
-          height="134"
+          :width="$utils.formatSize(100)"
+          :height="$utils.formatSize(134)"
           fit="cover"
           radius="4"
           :src="detail.image"
@@ -37,7 +38,7 @@
           @click="showCatalogue"
         >
           <template #title>
-            <van-icon name="bars" size="16" />
+            <van-icon name="bars" :size="$utils.formatSize(16)" />
             <span class="new-chapter van-ellipsis">
               {{ detail.newestChapterName }}
             </span>
@@ -60,8 +61,8 @@
         <van-image
           v-show="showTop"
           class="avatar-img"
-          width="26"
-          height="36"
+          :width="$utils.formatSize(26)"
+          :height="$utils.formatSize(36)"
           fit="cover"
           :src="detail.image"
           :alt="detail.name"
@@ -73,6 +74,16 @@
       </div>
     </back>
     <div class="detail-btn-group">
+      <van-button
+        type="danger"
+        plain
+        class="bookshelf"
+        :class="{ active: inBookshelf && login }"
+        @click="insertShelf"
+      >
+        <i class="iconfont icon-jiarushujia" />
+        {{ inBookshelf && login ? '已加书架' : '加入书架' }}
+      </van-button>
       <van-button
         class="read-right-now"
         type="danger"
@@ -96,6 +107,7 @@
   import Scroll from '@components/scroll'
   import Back from '@components/back'
   import ChapterCatalogue from '@components/menu/ChapterCatalogue'
+  import insertBookshelfMixin from '@/mixins/insertBookshelfMixin'
 
   export default {
     name: 'Detail',
@@ -104,10 +116,10 @@
       Back,
       ChapterCatalogue
     },
+    mixins: [insertBookshelfMixin],
     data() {
       return {
         showTop: false,
-        bookId: '',
         detail: {},
         relativeTime: '',
         activeId: '',
@@ -133,12 +145,18 @@
         immediate: true
       }
     },
+    created() {
+      this.isInBookshelf()
+    },
     methods: {
       async init() {
         this.bookId = this.$route.query.bookId || ''
         if (this.bookId) {
           this.detail = await this.$api.detail.getBookInfo(this.bookId)
           this.relativeTime = this.$dayjs(this.detail.updateTime).fromNow()
+          this.$nextTick(() => {
+            this.$refs.scroll.refresh()
+          })
         } else {
           this.back()
         }
@@ -204,6 +222,9 @@
         })
         this.chapterList = list
         this.pageParams.total = total
+      },
+      insertShelf() {
+        this.insertBookshelf(this.inBookshelf)
       }
     }
   }
@@ -304,14 +325,30 @@
     }
   }
   .detail-btn-group {
+    display: flex;
+    justify-content: flex-end;
     position: fixed;
     bottom: 0;
     width: 100%;
     height: 44px;
     background: $color-white;
     box-shadow: 0 0 1px rgba($color: $color-black, $alpha: 0.1);
+    .bookshelf {
+      border: none;
+      padding: 0 40px;
+      &.active .van-button__text {
+        color: #aaa;
+      }
+      .van-button__text {
+        display: flex;
+        align-items: center;
+        color: rgba(0, 0, 0);
+      }
+      .iconfont {
+        padding: 0 6px;
+      }
+    }
     .read-right-now {
-      float: right;
       padding: 0 40px;
     }
   }

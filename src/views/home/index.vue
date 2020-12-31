@@ -2,7 +2,12 @@
   <div class="home">
     <div class="title">
       <div class="title-logo" />
-      <van-icon class="title-search" size="18" name="search" @click="search" />
+      <van-icon
+        class="title-search"
+        :size="$utils.formatSize(18)"
+        name="search"
+        @click="search"
+      />
     </div>
     <van-tabs v-model="activeName">
       <van-tab
@@ -53,6 +58,11 @@
             name: 'recent',
             title: '最近',
             path: '/recent'
+          },
+          {
+            name: 'bookshelf',
+            title: '书架',
+            path: '/bookshelf'
           }
         ],
         searchVisible: false

@@ -8,5 +8,12 @@ export default {
   // 数组去重
   unique(arr) {
     return [...new Set(arr)]
+  },
+  formatSize(value, fixedLen = 0) {
+    const scale = document.documentElement.clientWidth / 375
+    const formatValue = value * scale
+    return fixedLen === 0
+      ? Math.round(formatValue)
+      : parseFloat(formatValue.toFixed(fixedLen))
   }
 }

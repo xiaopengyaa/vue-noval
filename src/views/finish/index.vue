@@ -1,5 +1,10 @@
 <template>
-  <div class="finish">
+  <div
+    class="finish"
+    @touchstart.prevent="touchStart"
+    @touchmove.prevent="touchMove"
+    @touchend="touchEnd('finish')"
+  >
     <scroll ref="scroll" class="finish__list" :data="list">
       <div class="scroll-content">
         <card-item
@@ -24,13 +29,15 @@
   import homeMixins from '@/mixins/homeMixins'
   import Scroll from '@components/scroll'
   import CardItem from '@components/card/CardItem'
+  import touchMoveMixin from '@/mixins/touchMoveMixin'
+
   export default {
     name: 'Finish',
     components: {
       Scroll,
       CardItem
     },
-    mixins: [homeMixins],
+    mixins: [homeMixins, touchMoveMixin],
     data() {
       return {
         type: 'quanben',

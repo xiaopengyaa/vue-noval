@@ -1,6 +1,12 @@
 <template>
   <scroll ref="scroll" class="recommend" :data="recommendList">
-    <div class="scroll-content">
+    <div
+      ref="content"
+      class="scroll-content"
+      @touchstart.prevent="touchStart"
+      @touchmove.prevent="touchMove"
+      @touchend="touchEnd('recommend')"
+    >
       <div v-show="recommendList.length > 0" class="card-list">
         <div class="card-list__title">
           <i class="card-list__icon" />
@@ -59,13 +65,15 @@
   import homeMixins from '@/mixins/homeMixins'
   import Scroll from '@components/scroll'
   import CardItem from '@components/card/CardItem'
+  import touchMoveMixin from '@/mixins/touchMoveMixin'
+
   export default {
     name: 'Recommend',
     components: {
       Scroll,
       CardItem
     },
-    mixins: [homeMixins],
+    mixins: [homeMixins, touchMoveMixin],
     data() {
       return {
         recommendList: [],

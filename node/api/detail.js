@@ -73,17 +73,14 @@ const homeApi = {
       }
     },
     // 获取章节列表
-    async getChapterList(bookId, page = 1, pageSize = 10) {
+    async getChapterList(bookId) {
       const url = `https://biquge.com.cn/book/${bookId}/`
       const html = await api.get(url)
       const $ = cheerio.load(html)
       const list = []
       const $dd = $('#list dd')
       const total = $dd.length || 0
-      const start = (page - 1) * pageSize
-      const end = page * pageSize
-      const $filterDD = $dd.slice(start, end)
-      $filterDD.each((index, elem) => {
+      $dd.each((index, elem) => {
         const $a = $(elem).find('a')
         const chapterId = $a
           .attr('href')

@@ -8,7 +8,7 @@
     @click.stop
   >
     <van-icon
-      size="18"
+      :size="$utils.formatSize(18)"
       class="go-back__arrow"
       name="arrow-left"
       @click="back"

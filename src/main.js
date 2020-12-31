@@ -8,6 +8,7 @@ import Vant from 'vant'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
+import './utils/rem.js'
 
 // 全局引入css
 import '@assets/css/index.scss'

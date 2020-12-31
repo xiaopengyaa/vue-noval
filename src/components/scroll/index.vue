@@ -6,9 +6,14 @@
 
 <script>
   import BScroll from 'better-scroll'
+
   export default {
     name: 'Scroll',
     props: {
+      scrollBar: {
+        type: Boolean,
+        default: false
+      },
       /**
        * 1 滚动的时候会派发scroll事件，会截流。
        * 2 滚动的时候实时派发scroll事件，不会截流。
@@ -79,7 +84,7 @@
        */
       refreshDelay: {
         type: Number,
-        default: 20
+        default: 200
       }
     },
     watch: {
@@ -112,11 +117,12 @@
           probeType: this.probeType,
           click: this.click,
           scrollX: this.scrollX,
-          useTransition: this.useTransition
-          // bounce: {
-          //   top: false,
-          //   bottom: false
-          // }
+          scrollbar: this.scrollBar
+            ? {
+                fade: true,
+                interactive: true // 表示滚动条是否可以交互
+              }
+            : false
         })
 
         // 是否派发滚动事件

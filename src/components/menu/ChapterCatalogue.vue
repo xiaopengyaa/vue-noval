@@ -10,13 +10,14 @@
         </div>
         <van-icon
           class="chapter-catalogue__icon"
-          size="20"
+          :size="$utils.formatSize(20)"
           :name="order"
           @click="orderList"
         />
       </back>
       <scroll
         ref="scroll"
+        :scroll-bar="scrollBar"
         :data="chapterList"
         class="chapter-catalogue__scroll"
       >
@@ -37,13 +38,6 @@
           />
         </div>
       </scroll>
-      <van-pagination
-        v-show="pageParams.total > pageParams.pageSize"
-        v-model="pageParams.page"
-        :total-items="pageParams.total"
-        :items-per-page="pageParams.pageSize"
-        @change="pageChange"
-      />
     </div>
   </transition>
 </template>
@@ -89,7 +83,8 @@
     },
     data() {
       return {
-        order: 'descending'
+        order: 'descending',
+        scrollBar: true
       }
     },
     computed: {
@@ -128,6 +123,26 @@
           )
         })
       }
+      // _initScroll() {
+      //   this.scroll = new BScroll(this.$refs.chat, {
+      //     infinity: {
+      //       render: item => {
+      //         let div = this.$refs.li.cloneNode(true)
+      //         div.innerText = item.chapterName
+      //         return div
+      //       },
+      //       fetch(count) {
+      //         let countae = Math.max(30, count)
+      //         return new Promise(resolve => {
+      //           resolve(Promise.all(this.chapterList))
+      //         })
+      //       },
+      //       createTombstone: () => {
+      //         return this.$refs.tombstone.cloneNode(true)
+      //       }
+      //     }
+      //   })
+      // }
     }
   }
 </script>
