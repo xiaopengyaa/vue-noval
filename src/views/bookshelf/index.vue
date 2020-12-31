@@ -114,7 +114,7 @@
     .login-btn {
       position: absolute;
       left: 50%;
-      top: 45%;
+      top: 44%;
       transform: translate(-50%, -50%);
       width: 80%;
       color: $color-white;

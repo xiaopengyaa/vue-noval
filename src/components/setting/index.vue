@@ -58,7 +58,7 @@
               <p>{{ viewMode === 'day' ? '夜间' : '日间' }}</p>
             </div>
           </div>
-          <div class="font-family-wrapper">
+          <!-- <div class="font-family-wrapper">
             <van-button round class="button" @click="showFont = true">
               {{ actions[fontIndex].name }} >
             </van-button>
@@ -72,7 +72,7 @@
             :overlay="false"
             :round="false"
             @select="changeFontFamily"
-          />
+          /> -->
         </div>
       </div>
     </div>
