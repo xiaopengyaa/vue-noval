@@ -13,7 +13,7 @@
       {{ chapterInfo.title }}
     </div>
     <div class="reader__content">
-      <article class="reader__article">
+      <article class="reader__article" @touchmove="scroll">
         <div
           :style="`font-size:${fontSize + 8}px;color:${fontColor}`"
           class="title"
@@ -89,7 +89,7 @@
       }
     },
     computed: {
-      ...mapState('base', ['viewMode', 'dayBgColor', 'login']),
+      ...mapState('base', ['viewMode', 'dayBgColor', 'user', 'bookshelfList']),
       bgColor() {
         return this.viewMode === 'day' ? this.dayBgColor : '#2b2929'
       },
@@ -106,14 +106,20 @@
     },
     created() {
       this.init()
-      this.isInBookshelf()
     },
     beforeDestroy() {
       // 记录最近阅读信息
       this.saveRecent()
     },
     methods: {
-      ...mapMutations('base', ['SET_VIEW_MODE', 'SET_DAYBGCOLOR']),
+      ...mapMutations('base', [
+        'SET_VIEW_MODE',
+        'SET_DAYBGCOLOR',
+        'SET_BOOKSHELFLIST'
+      ]),
+      scroll() {
+        // console.log(e.target)
+      },
       async init() {
         this.bookId = this.$route.query.bookId
         this.chapterId = this.$route.query.chapterId
@@ -122,6 +128,7 @@
             bookInfo,
             chapterInfo
           } = await this.$api.detail.getChapterInfo(this.bookId, this.chapterId)
+          this.inBookshelf = bookInfo.collection === 1
           this.bookInfo = bookInfo
           this.chapterInfo = chapterInfo
           // 记录最近阅读信息
@@ -133,19 +140,28 @@
         }
       },
       // 记录最近阅读信息（只保存最新10条）/ 保存书架最新信息
-      saveRecent() {
+      async saveRecent() {
         const LENGTH = 10
         const oldRecentArr = this.$utils.localStorage.get('recentArr') || []
-        const bookshelfArr = this.$utils.localStorage.get('bookshelfArr') || []
+        const bookshelfArr = this.bookshelfList
         const book = bookshelfArr.find(item => {
           return item.bookId === this.bookId
         })
         if (book) {
-          book.title = this.chapterInfo.title
+          book.readAt = this.chapterInfo.title
           book.chapterId = this.chapterId
           book.time = +new Date()
-          this.$utils.localStorage.set('bookshelfArr', bookshelfArr)
+          this.SET_BOOKSHELFLIST(bookshelfArr)
+          //保存最新信息到数据库
+          this.$api.user.setBookshelf({
+            collection: 1,
+            bookId: this.bookId,
+            readAt: this.chapterInfo?.title || '',
+            time: +new Date(),
+            readId: this.chapterId
+          })
         }
+
         // 过滤重复bookId的数据
         const recentArr = oldRecentArr.filter(
           item => item.bookId !== this.bookId

@@ -47,11 +47,11 @@
         <div v-show="moreFlag" class="more" @click.stop>
           <div class="insert-bookshelf" @click="insertBookshelf">
             <i
-              :class="{ active: inBookshelf && login }"
+              :class="{ active: inBookshelf && user }"
               class="iconfont icon-jiarushujia"
             />
-            <span :class="{ active: inBookshelf && login }">
-              {{ inBookshelf && login ? '已加书架' : '加入书架' }}
+            <span :class="{ active: inBookshelf && user }">
+              {{ inBookshelf && user ? '已加书架' : '加入书架' }}
             </span>
           </div>
           <div class="to-bookdetail" @click="toBookDetail">
@@ -119,7 +119,7 @@
       }
     },
     computed: {
-      ...mapState('base', ['login'])
+      ...mapState('base', ['user'])
     },
     methods: {
       hideTools() {
