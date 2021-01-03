@@ -3,9 +3,10 @@ export default {
   state: {
     loading: 0,
     baseRouteName: 'recommend',
-    login: false,
+    user: '',
     viewMode: 'day',
-    dayBgColor: '#c4b395'
+    dayBgColor: '#c4b395',
+    bookshelfList: []
   },
   mutations: {
     SET_LOADING(state, status) {
@@ -17,14 +18,17 @@ export default {
     SET_BASE_ROUTE_NAME(state, name) {
       state.baseRouteName = name
     },
-    SET_LOGIN(state, status) {
-      state.login = status
+    SET_USER(state, username) {
+      state.user = username
     },
     SET_VIEW_MODE(state, mode) {
       state.viewMode = mode
     },
     SET_DAYBGCOLOR(state, color) {
       state.dayBgColor = color
+    },
+    SET_BOOKSHELFLIST(state, list) {
+      state.bookshelfList = list
     }
   },
   actions: {

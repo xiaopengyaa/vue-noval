@@ -9,7 +9,19 @@
 </template>
 
 <script>
+  import { mapMutations } from 'vuex'
+
   export default {
-    name: 'App'
+    name: 'App',
+    created() {
+      this.getUser()
+    },
+    methods: {
+      ...mapMutations('base', ['SET_USER']),
+      async getUser() {
+        const { user } = await this.$api.user.getUser()
+        this.SET_USER(user)
+      }
+    }
   }
 </script>

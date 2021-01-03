@@ -5,7 +5,9 @@
  */
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
 import { Toast } from 'vant'
+import storage from './storage'
 
 // 创建axios实例
 const service = axios.create({
@@ -16,6 +18,11 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
+    // 注入token
+    const token = storage.localStorage.get('noval_token') || ''
+    if (token) {
+      config.headers['Authorization'] = token
+    }
     store.dispatch('base/SET_LOADING', true)
     Toast.loading({
       message: '加载中...',
@@ -41,6 +48,9 @@ service.interceptors.response.use(
       if (response.status != 200) {
         Toast.fail('请求失败')
       }
+      if (response.data.code && response.data.code !== 200) {
+        Toast.fail(response.data.message)
+      }
     }, 200)
     return response
   },
@@ -50,7 +60,11 @@ service.interceptors.response.use(
     if (store.state.base.loading <= 0) {
       Toast.clear()
     }
-    Toast.fail('请求失败')
+    if (err.response && err.response.status === 403) {
+      router.push('/login')
+    } else {
+      Toast.fail('请求失败')
+    }
     return Promise.reject(data || err)
   }
 )
@@ -65,7 +79,7 @@ const api = {
       })
       return Promise.resolve(res.data)
     } catch (err) {
-      console.error(err)
+      return Promise.reject(err)
     }
   },
   async post(url, data, config = {}) {
@@ -73,7 +87,7 @@ const api = {
       const res = await service.post(url, data, config)
       return Promise.resolve(res.data)
     } catch (err) {
-      console.error(err)
+      return Promise.reject(err)
     }
   }
 }
