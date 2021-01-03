@@ -1,10 +1,16 @@
 const cheerio = require('cheerio')
 const { api } = require('../utils')
+const Collection = require('../dbs/models/collection')
 
 const homeApi = {
   bqg: {
     // 获取书面内容
-    async getBookInfo(bookId) {
+    async getBookInfo(bookId, username = '') {
+      const result = await Collection.findOne({
+        username,
+        bookId
+      })
+      const collection = result ? 1 : 0
       const url = `https://m.biquge.com.cn/book/${bookId}/`
       const html = await api.get(url)
       const $ = cheerio.load(html)
@@ -69,7 +75,8 @@ const homeApi = {
         newestChapterId,
         desc,
         chapterId,
-        recentChapterList
+        recentChapterList,
+        collection
       }
     },
     // 获取章节列表
@@ -99,9 +106,9 @@ const homeApi = {
       }
     },
     // 获取小说内容
-    async getChapterInfo(bookId, chapterId) {
+    async getChapterInfo(bookId, chapterId, username = '') {
       // 先获取书籍详情
-      const bookInfo = await this.getBookInfo(bookId)
+      const bookInfo = await this.getBookInfo(bookId, username)
       const url = `https://biquge.com.cn/book/${bookId}/${chapterId}.html`
       const html = await api.get(url)
       const $ = cheerio.load(html, { decodeEntities: false })

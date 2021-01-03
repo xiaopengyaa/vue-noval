@@ -9,7 +9,8 @@ const REQ_TYPE = 'bqg' // 笔趣阁
 router.post(
   '/getBookInfo',
   asyncHandler(async (req, res) => {
-    const data = await api[REQ_TYPE].getBookInfo(req.body.bookId)
+    const { username } = req.body
+    const data = await api[REQ_TYPE].getBookInfo(req.body.bookId, username)
     res.send(data)
   })
 )
@@ -28,8 +29,8 @@ router.post(
 router.post(
   '/getChapterInfo',
   asyncHandler(async (req, res) => {
-    const { bookId, chapterId } = req.body
-    const data = await api[REQ_TYPE].getChapterInfo(bookId, chapterId)
+    const { bookId, chapterId, username } = req.body
+    const data = await api[REQ_TYPE].getChapterInfo(bookId, chapterId, username)
     res.send(data)
   })
 )
