@@ -13,6 +13,9 @@ const CollectionSchema = new Schema({
   readAt: {
     type: String
   },
+  readId: {
+    type: String
+  },
   time: {
     type: Number
   }

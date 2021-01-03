@@ -131,11 +131,12 @@ router.get(
     })
     const result = await Promise.all(promiseArr)
     result.forEach((item, index) => {
-      const { readAt, time } = list[index]
+      const { readAt, time, readId } = list[index]
       newList.push({
         ...item,
         readAt,
-        time
+        time,
+        readId
       })
     })
     res.send(newList)
@@ -146,7 +147,7 @@ router.get(
 router.post(
   '/setBookCollection',
   asyncHandler(async (req, res) => {
-    const { username, bookId, collection, readAt, time } = req.body
+    const { username, bookId, collection, readAt, time, readId } = req.body
     if (collection === 1) {
       const result = await Collection.findOne({
         username,
@@ -156,6 +157,7 @@ router.post(
         username,
         bookId,
         readAt,
+        readId,
         time
       }
       if (result) {
