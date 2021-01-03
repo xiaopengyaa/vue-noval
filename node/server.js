@@ -26,7 +26,9 @@ app.use(function(req, res, next) {
   const authorization = req.get('Authorization')
   jwt.verify(authorization, secretKey, function(err, data) {
     const username = err ? '' : data.username
-    req.body.username = username
+    if (!req.body.username) {
+      req.body.username = username
+    }
   })
   if (!blackApiList.includes(req.path)) {
     // 排除不需要授权的路由
