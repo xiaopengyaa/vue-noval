@@ -1,10 +1,10 @@
 <template>
   <transition name="slide">
-    <div class="login">
+    <div class="register">
       <div class="header">
         <back class="back" @back="back" />
       </div>
-      <div class="login-wrapper">
+      <div class="register-wrapper">
         <div class="img" />
         <div class="account">
           <i class="iconfont icon-account" />
@@ -12,7 +12,7 @@
             v-model="account"
             class="input account-input"
             type="text"
-            placeholder="请输入账号"
+            placeholder="请输入账号（6-10位数字）"
           />
         </div>
         <div class="password">
@@ -21,32 +21,34 @@
             ref="password"
             v-model="password"
             class="input password-input"
-            :type="hidePassword ? 'password' : 'text'"
-            placeholder="请输入密码"
+            type="password"
+            placeholder="请输入密码（6-10位数字、字母）"
           />
-          <i
-            :class="{
-              iconfont: true,
-              'icon-24gf-eyeHide': hidePassword,
-              'icon-24gf-eye': !hidePassword
-            }"
-            @click="togglePasswordType"
+        </div>
+        <div class="password">
+          <i class="iconfont icon-password" />
+          <van-field
+            ref="password"
+            v-model="password2"
+            class="input password-input"
+            type="password"
+            placeholder="请再次确认密码"
           />
         </div>
         <div class="text">
           <!-- <span>忘记密码</span> -->
-          <span @click="toRegister">用户注册</span>
+          <!-- <span>用户注册</span> -->
         </div>
       </div>
-      <div class="login-btn">
+      <div class="register-btn">
         <van-button
-          ref="loginText"
+          ref="registerText"
           round
-          class="login-text"
-          :class="{ active: canLogin }"
-          @click="login"
+          class="register-text"
+          :class="{ active: canRegister }"
+          @click="register"
         >
-          登录
+          注册
         </van-button>
       </div>
     </div>
@@ -54,7 +56,8 @@
 </template>
 <script>
   import Back from '@components/back'
-  import { mapMutations } from 'vuex'
+  import { Toast } from 'vant'
+  // import { mapMutations } from 'vuex'
 
   export default {
     components: {
@@ -65,39 +68,38 @@
       return {
         account: '',
         password: '',
-        hidePassword: true
+        password2: ''
       }
     },
     computed: {
-      info() {
-        return this.account + this.password
-      },
-      canLogin() {
-        return this.account && this.password
+      canRegister() {
+        return this.account && this.password && this.password2
       }
     },
     methods: {
-      ...mapMutations('base', ['SET_USER']),
       back() {
         this.$router.back()
       },
-      async login() {
-        const result = await this.$api.user.login({
-          username: this.account,
-          password: this.password
-        })
-        if (result.code === 200) {
-          // 缓存token
-          this.$utils.localStorage.set('noval_token', result.data.token)
-          this.SET_USER(result.data.username)
-          this.$router.back()
+      async register() {
+        if (
+          /^\d{6,10}$/.test(this.account) &&
+          /^\w{6,10}$/.test(this.password) &&
+          /^\w{6,10}$/.test(this.passwor2)
+        ) {
+          if (this.password !== this.password2) {
+            Toast.fail('密码不一致')
+          } else {
+            const data = await this.$api.user.register({
+              username: this.account,
+              password: this.password
+            })
+            if (data.code == 200) {
+              this.$router.back()
+            }
+          }
+        } else {
+          Toast.fail('账号密码格式不正确')
         }
-      },
-      togglePasswordType() {
-        this.hidePassword = !this.hidePassword
-      },
-      toRegister() {
-        this.$router.push({ path: '/register' })
       }
     }
   }
@@ -112,7 +114,7 @@
   .slide-leave-to {
     transform: translate3d(100%, 0, 0);
   }
-  .login {
+  .register {
     position: fixed;
     top: 0;
     left: 0;
@@ -122,14 +124,14 @@
     background: $color-white;
     .header {
       position: relative;
-      @include background-image('~@assets/images/base/login-bg.png');
+      @include background-image('~@assets/images/base/register-bg.png');
       width: 100%;
       height: 80px;
       .back {
         top: 18px;
       }
     }
-    .login-wrapper {
+    .register-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -168,23 +170,25 @@
         width: 100%;
         line-height: 12px;
         height: 12px;
-        text-align: right;
+        text-align: center;
         margin-bottom: 24px;
         span {
           color: #0091de;
+          position: absolute;
           &:first-child {
             left: 0;
           }
           &:last-child {
-            padding: 12px;
+            text-align: right;
+            right: 0;
           }
         }
       }
     }
-    .login-btn {
+    .register-btn {
       width: 80%;
       margin: 0px auto;
-      .login-text {
+      .register-text {
         width: 100%;
         height: 48px;
         background: $color-red2;

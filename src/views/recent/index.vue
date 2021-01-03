@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="recent"
-    @touchstart.prevent="touchStart"
-    @touchmove.prevent="touchMove"
-    @touchend="touchEnd('recent')"
-  >
+  <div class="recent">
     <scroll
       v-show="recentList.length > 0"
       ref="scroll"
@@ -48,7 +43,6 @@
   import homeMixins from '@/mixins/homeMixins'
   import Scroll from '@components/scroll'
   import CardItem from '@components/card/CardItem'
-  import touchMoveMixin from '@/mixins/touchMoveMixin'
 
   export default {
     name: 'Recent',
@@ -56,7 +50,7 @@
       Scroll,
       CardItem
     },
-    mixins: [homeMixins, touchMoveMixin],
+    mixins: [homeMixins],
     data() {
       return {
         recentList: []

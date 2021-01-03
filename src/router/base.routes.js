@@ -55,6 +55,14 @@ export default [
         meta: {
           keepAlive: true
         }
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('@/views/register'),
+        meta: {
+          keepAlive: true
+        }
       }
     ]
   }

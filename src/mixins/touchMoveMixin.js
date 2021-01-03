@@ -1,4 +1,4 @@
-const OFFSET = 0.1
+const OFFSET = 0.15
 
 export default {
   data() {

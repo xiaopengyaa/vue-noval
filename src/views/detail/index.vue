@@ -78,11 +78,11 @@
         type="danger"
         plain
         class="bookshelf"
-        :class="{ active: inBookshelf && login }"
+        :class="{ active: inBookshelf && user }"
         @click="insertShelf"
       >
         <i class="iconfont icon-jiarushujia" />
-        {{ inBookshelf && login ? '已加书架' : '加入书架' }}
+        {{ inBookshelf && user ? '已加书架' : '加入书架' }}
       </van-button>
       <van-button
         class="read-right-now"
@@ -144,9 +144,6 @@
         },
         immediate: true
       }
-    },
-    created() {
-      this.isInBookshelf()
     },
     methods: {
       async init() {

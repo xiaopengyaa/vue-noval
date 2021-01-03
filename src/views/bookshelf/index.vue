@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="bookshelf"
-    @touchstart="touchStart"
-    @touchmove.prevent="touchMove"
-    @touchend="touchEnd('bookshelf')"
-  >
-    <div v-show="!login" class="login-btn-wrapper">
+  <div class="bookshelf">
+    <div v-show="!user" class="login-btn-wrapper">
       <van-button round class="login-btn" @click="showLogin">
         登录
       </van-button>
       <p>登录后同步书架</p>
     </div>
-    <div v-show="login" class="bookshelf-wrapper">
+    <div v-show="user" class="bookshelf-wrapper">
       <scroll
         v-show="bookshelfList.length > 0"
         ref="scroll"
@@ -30,12 +25,12 @@
                 :title="item.name"
                 :name="item.author"
                 :src="item.image"
-                :latest="`最新：${item.newest}`"
-                :remark="
-                  item.title === '未阅读' ? '未阅读' : `已读至：${item.title}`
-                "
+                :latest="`最新：${item.newestChapterName}`"
+                :remark="item.readAt ? `已读至：${item.readAt}` : '未阅读'"
               />
-              <div class="extra">{{ $dayjs(item.time).fromNow() }}</div>
+              <div v-if="item.readAt" class="extra">
+                {{ $dayjs(item.time).fromNow() }}
+              </div>
             </div>
             <template #right>
               <van-button
@@ -62,18 +57,16 @@
   import homeMixins from '@/mixins/homeMixins'
   import CardItem from '@components/card/CardItem'
   import Scroll from '@components/scroll'
-  import { mapState } from 'vuex'
-  import touchMoveMixin from '@/mixins/touchMoveMixin'
+  import { mapState, mapMutations } from 'vuex'
 
   export default {
     components: {
       CardItem,
       Scroll
     },
-    mixins: [homeMixins, touchMoveMixin],
+    mixins: [homeMixins],
     data() {
       return {
-        bookshelfList: [],
         imageSize: {
           width: this.$utils.formatSize(90),
           height: this.$utils.formatSize(120)
@@ -81,12 +74,19 @@
       }
     },
     computed: {
-      ...mapState('base', ['login'])
+      ...mapState('base', ['user', 'bookshelfList'])
     },
-    activated() {
-      this.bookshelfList = this.$utils.localStorage.get('bookShelfArr') || []
+    watch: {
+      user: {
+        async handler() {
+          const list = await this.$api.user.getBookshelf()
+          this.SET_BOOKSHELFLIST(list)
+        },
+        immediate: true
+      }
     },
     methods: {
+      ...mapMutations('base', ['SET_USER', 'SET_BOOKSHELFLIST']),
       showLogin() {
         this.$router.push({
           path: '/login'
@@ -95,12 +95,18 @@
       toDetail(item) {
         this.$router.push({
           path: '/detail/reader',
-          query: { bookId: item.bookId, chapterId: item.chapterId }
+          query: { bookId: item.bookId, chapterId: item.readId }
         })
       },
       deleteItem(index) {
-        this.bookshelfList.splice(index, 1)
-        this.$utils.localStorage.set('bookShelfArr', this.bookshelfList)
+        const list = this.bookshelfList.slice()
+        //删除书籍
+        this.$api.user.setBookshelf({
+          collection: 0,
+          bookId: list[index].bookId
+        })
+        list.splice(index, 1)
+        this.SET_BOOKSHELFLIST(list)
       }
     }
   }
