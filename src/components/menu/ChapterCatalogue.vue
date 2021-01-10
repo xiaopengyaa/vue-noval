@@ -97,9 +97,6 @@
       visible(flag) {
         // 滚动到active元素
         flag && this.scrollIntoActive()
-      },
-      order() {
-        this.scrollIntoActive()
       }
     },
     methods: {

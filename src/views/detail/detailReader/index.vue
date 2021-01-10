@@ -135,7 +135,7 @@
       ]),
       // 获取下章内容
       async nextChapter() {
-        if (this.flag) {
+        if (this.flag || !this.chapterInfo.nextChapterId) {
           return
         }
         this.flag = true
