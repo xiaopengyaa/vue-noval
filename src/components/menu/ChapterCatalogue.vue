@@ -118,9 +118,10 @@
       scrollIntoActive() {
         this.$nextTick(() => {
           this.$refs.scroll.refresh()
-          this.$refs.scroll.scrollToElement(
-            this.$el.querySelector('.active-item')
-          )
+          this.$el.querySelector('.active-item') &&
+            this.$refs.scroll.scrollToElement(
+              this.$el.querySelector('.active-item')
+            )
         })
       }
       // _initScroll() {

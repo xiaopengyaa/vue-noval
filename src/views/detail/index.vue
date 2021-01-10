@@ -150,6 +150,7 @@
         this.bookId = this.$route.query.bookId || ''
         if (this.bookId) {
           this.detail = await this.$api.detail.getBookInfo(this.bookId)
+          this.inBookshelf = this.detail.collection === 1
           this.relativeTime = this.$dayjs(this.detail.updateTime).fromNow()
           this.$nextTick(() => {
             this.$refs.scroll.refresh()

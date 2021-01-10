@@ -12,24 +12,37 @@
     >
       {{ chapterInfo.title }}
     </div>
-    <div class="reader__content">
-      <article class="reader__article" @touchmove="scroll">
-        <div
-          :style="`font-size:${fontSize + 8}px;color:${fontColor}`"
-          class="title"
+    <scroll
+      ref="scroll"
+      :pullup="true"
+      :data="chapterArr"
+      class="scroll"
+      @scrollToEnd="nextChapter"
+    >
+      <div class="reader__content">
+        <article
+          v-for="(item, index) in chapterArr"
+          :key="index"
+          ref="article"
+          class="reader__article"
         >
-          {{ chapterInfo.title }}
-        </div>
-        <section
-          :style="
-            `font-size:${fontSize}px;line-height:${fontSize +
-              4}px;color:${fontColor}`
-          "
-          class="content"
-          v-html="chapterInfo.content"
-        />
-      </article>
-    </div>
+          <div
+            :style="`font-size:${fontSize + 8}px;color:${fontColor}`"
+            class="title"
+          >
+            {{ item.title }}
+          </div>
+          <section
+            :style="
+              `font-size:${fontSize}px;line-height:${fontSize +
+                4}px;color:${fontColor}`
+            "
+            class="content"
+            v-html="item.content"
+          />
+        </article>
+      </div>
+    </scroll>
     <read-tools
       ref="readTool"
       :visible.sync="toolVisible"
@@ -63,12 +76,14 @@
   import ReadTools from '@components/menu/ReadTools'
   import { mapState, mapMutations } from 'vuex'
   import insertBookshelfMixin from '@/mixins/insertBookshelfMixin'
+  import Scroll from '@components/scroll'
 
   export default {
     name: 'DetailReaders',
     components: {
       ReadTools,
-      ChapterCatalogue
+      ChapterCatalogue,
+      Scroll
     },
     mixins: [insertBookshelfMixin],
     data() {
@@ -85,7 +100,8 @@
           total: 0
         },
         fontSize: this.$utils.formatSize(18),
-        fontFamily: 'Helvetica'
+        fontFamily: 'Helvetica',
+        chapterArr: []
       }
     },
     computed: {
@@ -117,8 +133,35 @@
         'SET_DAYBGCOLOR',
         'SET_BOOKSHELFLIST'
       ]),
-      scroll() {
-        // console.log(e.target)
+      // 获取下章内容
+      async nextChapter() {
+        if (this.flag) {
+          return
+        }
+        this.flag = true
+        this.firstChapter = this.chapterInfo
+        const { chapterInfo } = await this.$api.detail.getChapterInfo(
+          this.bookId,
+          this.chapterInfo.nextChapterId
+        )
+        this.chapterInfo = chapterInfo
+        this.chapterArr.push(chapterInfo)
+        if (this.chapterArr.length > 5) {
+          this.chapterArr.shift()
+        }
+        this.$nextTick(() => {
+          let currentChapter = this.$refs.article[this.chapterArr.length - 1]
+          this.$refs.scroll.scrollToElement(
+            currentChapter,
+            0,
+            false,
+            -window.innerHeight
+          )
+          this.flag = false
+        })
+      },
+      refresh() {
+        this.$refs.scroll.refresh()
       },
       async init() {
         this.bookId = this.$route.query.bookId
@@ -128,6 +171,11 @@
             bookInfo,
             chapterInfo
           } = await this.$api.detail.getChapterInfo(this.bookId, this.chapterId)
+          this.chapterArr = [chapterInfo]
+          this.$nextTick(() => {
+            this.$refs.scroll.scrollTo(0, 0)
+            this.refresh()
+          })
           this.inBookshelf = bookInfo.collection === 1
           this.bookInfo = bookInfo
           this.chapterInfo = chapterInfo
@@ -203,6 +251,12 @@
           })
           return
         }
+        // id相同，滚动回头部
+        else {
+          this.$refs.scroll.scrollTo(0, 0)
+          this.chapterInfo = this.firstChapter
+          this.chapterArr = [this.firstChapter]
+        }
       },
       back() {
         history.length > 0
@@ -270,9 +324,18 @@
 
 <style lang="scss" scoped>
   .reader {
+    width: 100%;
     min-height: 100%;
     background: #c8e8c8;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    .scroll {
+      height: 100%;
+      overflow: hidden;
+    }
     &__top {
+      z-index: 1;
       position: fixed;
       top: 0;
       right: 0;
@@ -282,6 +345,7 @@
       color: rgba($color: $color-black, $alpha: 0.4);
       padding: 0 16px;
       background: #c8e8c8;
+      overflow: auto;
     }
     &__content {
       padding-top: 44px;

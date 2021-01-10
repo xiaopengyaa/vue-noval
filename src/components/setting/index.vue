@@ -31,12 +31,9 @@
               v-for="(item, index) in color"
               :key="index"
               class="bgcolor-select"
+              :style="`background-color:${item.color}`"
               @click="selectBgcolor(item.color)"
             >
-              <div
-                class="color-item"
-                :style="`background-color:${item.color}`"
-              />
               <van-icon
                 v-show="dayBgColor === item.color"
                 class="success"
@@ -126,13 +123,14 @@
         this.$emit('changeFontSize', newValue)
       },
       color() {
-        this.$refs.scroll.refresh()
+        this.refresh()
+      },
+      settingFlag(flag) {
+        flag && this.refresh()
       }
     },
     mounted() {
-      this.$nextTick(() => {
-        this.$refs.scroll.refresh()
-      })
+      this.refresh()
     },
     methods: {
       selectBgcolor(color) {
@@ -152,6 +150,11 @@
       },
       hideFontFamilySetting() {
         this.showFont = false
+      },
+      refresh() {
+        this.$nextTick(() => {
+          this.$refs.scroll.refresh()
+        })
       }
     }
   }
@@ -170,7 +173,6 @@
       height: 100%;
       .setting {
         width: 100%;
-        height: 60px;
         &:not(:last-child) {
           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -205,26 +207,20 @@
         }
       }
       .scroll {
-        position: relative;
         overflow: hidden;
         .bgcolor {
-          position: absolute;
-          top: 15px;
-          padding: 0 20px;
-          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          width: max-content;
+          height: 100%;
           li {
-            display: inline-block;
-            position: relative;
-            width: 90px;
-            .color-item {
-              width: 68px;
-              height: 30px;
-              border-radius: 3px;
-            }
+            flex-shrink: 0;
+            @include flex-center;
+            width: 68px;
+            height: 30px;
+            border-radius: 3px;
+            margin: 0 10px;
             .success {
-              position: absolute;
-              top: 5px;
-              left: 25px;
               font-size: 20px;
               color: red;
             }
