@@ -198,6 +198,7 @@
         if (book) {
           book.readAt = this.chapterInfo.title
           book.chapterId = this.chapterId
+          book.readId = this.chapterId
           book.time = +new Date()
           this.SET_BOOKSHELFLIST(bookshelfArr)
           //保存最新信息到数据库
