@@ -16,7 +16,7 @@
     "cheerio": "^1.0.0-rc.3",
     "core-js": "^3.4.4",
     "dayjs": "^1.8.28",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.9",
     "normalize.css": "^8.0.1",
